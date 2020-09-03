@@ -1,0 +1,321 @@
+\ProvidesPackage{planning}
+
+\usepackage[rgb]{xcolor}
+\usepackage{tikz}
+
+
+\usepackage[french]{babel}
+\usetikzlibrary{babel} % pour pouvoir utiliser le babel français
+
+% key handler to store lengths, based on the original `.store in`
+\pgfkeys{
+  /handlers/.length in/.code={%
+    \let#1\relax% if length already exist, reset it
+    \newlength{#1}% create the new legth register
+    \pgfkeysalso{\pgfkeyscurrentpath/.code=\pgfmathsetlength#1{##1}}% calculate and store the length
+  }
+}
+% calcul de quelque longueurs supplémentaires
+\newlength{\hour} % largeur d'une heure
+\newlength{\minute} % largeur d'une minute
+\newlength{\hday} % hauteur d'une journée
+\newlength{\hgroupe} % hauteur d'un groupe
+\newcommand*\calculatelengths{
+  \setlength{\hour}{\dimexpr\wplanning / \hoursperday\relax} % largeur d'une heure
+  \setlength{\minute}{\dimexpr\hour / 60\relax} % largeur d'une minute
+  \setlength{\hday}{\dimexpr\hplanning / \daysperweek\relax} % hauteur d'une journée
+  \setlength{\hgroupe}{\dimexpr\hday / \numberofgroups\relax} % hauteur d'un groupe
+}
+% les paramètres généraux
+\tikzset{
+  % largeur du planning
+  largeur du planning/.length in=\wplanning,
+  largeur du planning = 21cm,
+  % hauteur du planning
+  hauteur du planning/.length in = \hplanning,
+  hauteur du planning = 17cm,
+  % largeur du nom du jour
+  largeur du nom du jour/.length in = \wdaylabel,
+  largeur du nom du jour = 4cm,
+  % largeur du nom du groupe
+  largeur du nom du groupe/.length in = \wgroupelabel,
+  largeur du nom du groupe = 1cm,
+  % hauteur du déplacement vertical des heures
+  hauteur du deplacement vertical des heures/.length in = \hhouroffset,
+  hauteur du deplacement vertical des heures = 4mm,
+  % nombre de jours dans la semaine
+  nombre de jours/.estore in=\daysperweek,
+  nombre de jours = 5,
+  % nombre d'heures par jour
+  nombre d'heures/.estore in=\hoursperday,
+  nombre d'heures=10,
+  % premier heure de la journée
+  heure du debut/.estore in=\startinghour,
+  heure du debut=8,
+  % nombre de groupes
+  nombre de groupes/.estore in=\numberofgroups,
+  nombre de groupes=3,
+  % les méthodes qui demande le recalcule des longueurs
+  largeur du planning/.append code=\calculatelengths,
+  hauteur du planning/.append code=\calculatelengths,
+  nombre de jours/.append code=\calculatelengths,
+  nombre d'heures/.append code=\calculatelengths,
+  nombre de groupes/.append code=\calculatelengths,
+  % il y a aussi les style optionnels utilisé avec /.try
+  % etiquette jour
+  % etiquette groupe
+  % etiquette heure
+  % etiquette demi-heure
+  % ligne jour
+  % ligne groupe
+  % ligne heure
+  % ligne demi-heure
+  % lignes verticales
+  cacher etiquettes groupes/.style={
+    largeur du nom du groupe=0,
+    etiquette groupe/.style={opacity=0},
+    ligne groupe/.style={draw=none}
+  }
+}
+\calculatelengths
+
+% définition du style `pos` qui peut être utiliser ainsi
+% [pos={1}{1}{09}{10}] pour positionner un point ( , ) à la place de
+%   mardi(1), en bas du groupe 1 (= en haut du groupe 2) à 9 heure et 10 minutes
+\tikzset{
+  every picture/.style={yscale=-1},
+  pos/.style n args={4}{
+    insert path={(\the\dimexpr \valhour\hour + \valmin\minute\relax,\the\dimexpr \valday\hday+\valgroupe\hgroupe\relax)}
+  },
+  pos/.prefix code={
+    % Je n'utilise pas \pgfmathsetmacro car 09 (9 en base 8!) n'est pas un nombre valide.
+    \edef\valday{\the\numexpr #1\relax}% day = 0 (lundi), ..., 5 (samedi)
+    \edef\valgroupe{\the\numexpr #2\relax}% groupe = 0, ...
+    \edef\valhour{\the\numexpr #3-\startinghour\relax}% hour = \startinghour, ...
+    \edef\valmin{\the\numexpr #4\relax}% minutes = 0, ...
+  }
+}
+% définition du macro \horaires
+% qui sauvegardes les heures et les minutes d'une expression comme 08:00-10:30
+% dans \fromh, \fromm, \toh, \tom, puis calcule la longeur \duree
+\newlength{\duree}
+\def\horaires#1:#2-#3:#4;{%
+  \xdef\fromh{#1}%
+  \xdef\fromm{#2}%
+  \xdef\toh{#3}%
+  \xdef\tom{#4}%
+  \setlength{\duree}{\the\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
+}
+\def\parsegroupe#1/#2/#3endparsegroupe{
+  \ifx\hfuzz#1\hfuzz
+    \xdef\grp{1}
+    \xdef\ngrps{1}
+  \else
+    \xdef\grp{#1}
+    \ifx\hfuzz#2\hfuzz
+      \xdef\ngrps{\numberofgroups}
+    \else
+      \xdef\ngrps{#2}
+    \fi
+  \fi
+}
+\def\groupe#1;{
+  \parsegroupe#1//endparsegroupe
+}
+% les styles (couleurs, épaisseur des traits, ...) du planning
+\tikzset{
+  fond/.style = {draw,fill=module\arabic{module}},
+  heure/.style = {inner sep=2pt,outer sep=0,draw,fill=black,fill opacity=.1,text opacity=1,scale=.7},
+  heure debut/.style={heure, below right},
+  heure fin/.style={heure, below left},
+  echelle/.code={
+    \pgfmathsetmacro{\scalefactor}{#1/(1+\numberofgroups/7)}% sqrt(2) = 1.4142135623730951
+    \pgfkeysalso{scale={\scalefactor},inner sep=2*\scalefactor pt}%
+  },
+  titre/.style={},
+  sur-titre/.style={above,font={\sffamily\hyphenchar\font=-1},text width=\duree,align=center},
+  salle/.style={below,black!84,font=\sffamily\it,text width=\duree,align=center},
+}
+% définition de \joursemaine
+% qui renvoie le numéro du jour de la semaine en fonction du nom :
+% lundi(1),mardi(2),mercredi(3),jeudi(4),vendredi(5),samedi(6),dimanche(7)
+% ainsi par exemple \joursemaine{mercredi} retourne 3
+\def\joursemaine#1#2#3;{%
+  \ifx#1l 1\fi%
+  \ifx#1m%%
+    \ifx#2a 2\else 3\fi%
+  \fi%
+  \ifx#1j 4\fi%
+  \ifx#1v 5\fi%
+  \ifx#1s 6\fi%
+  \ifx#1d 7\fi%
+}
+% définition de \creneau
+% qui est la commande principale pour dessiner un créneau
+% #1 est un style optionnel, par exemple {fond/.style={fill=red}}
+% #2 est le "sur-titre"
+% #3 est le "titre"
+% #4 est le "sous-titre" utiliser en général pour la salle
+% #5 est le jour, entre 1 et \daysperweek
+% #6 est le groupe, entre 1 et \numberofgroups
+% #7 sont les horaires, sous la forme {08:00-10:30} utilisée par \horaires
+\newcommand{\creneau}[7][]{% \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+  \edef\jour{\joursemaine#5;}
+  \horaires#7;
+  \groupe#6;
+  \edef\fromd{\jour-1}
+  \edef\tod{\jour-1}
+  \edef\fromg{\grp-1}
+  \edef\tog{\grp}
+  \begin{scope}[nombre de groupes=\ngrps,#1]
+    \path[fond]
+      [pos={\fromd}{\fromg}{\fromh}{\fromm}] coordinate (start)
+      [pos={\tod}{\tog}{\toh}{\tom}] coordinate (end)
+      (start) rectangle coordinate (mid) (end)
+    ;
+    \path
+      (start) node[heure debut]{\fromh:\fromm}
+      (start-|end) node[heure fin]{\toh:\tom}
+    ;
+    \path
+      (mid) node[titre](module){#3}
+      (module.north) node[sur-titre]{#2}
+      (module.south) node[salle]{#4}
+    ;
+  \end{scope}
+}
+% definition des couleurs des modules par défault
+\tikzset{
+  screen colors 1/.code={
+    \definecolor{module1}{HTML}{ffe119}
+    \definecolor{module2}{HTML}{f58231}
+    \definecolor{module3}{HTML}{bcf60c}
+    \definecolor{module4}{HTML}{f032e6}
+    \definecolor{module5}{HTML}{ffd8b1}
+    \definecolor{module6}{HTML}{f7295B}
+    \definecolor{module7}{HTML}{4cc45b}
+    \definecolor{module8}{HTML}{46f0f0}
+    \definecolor{module9}{HTML}{b13ed4}
+    \definecolor{module10}{HTML}{ff9ece}
+    \definecolor{module11}{HTML}{40c0c0}
+    \definecolor{module12}{HTML}{e7beff}
+    \definecolor{module13}{HTML}{dAa354}
+    \definecolor{module14}{HTML}{fffac8}
+    \definecolor{module15}{HTML}{c0c0c0}
+    \definecolor{module16}{HTML}{aaffc3}
+    \definecolor{module17}{HTML}{5383f8}
+  },
+  screen colors 2/.code={
+    \definecolor{module1}{hsb}{ 0.44,0.576,0.931}
+    \definecolor{module2}{hsb}{ 0.94,0.348,0.95}
+    \definecolor{module3}{hsb}{ 0.19,0.424,0.938}
+    \definecolor{module4}{hsb}{ 0.25,0.400,0.981}
+    \definecolor{module5}{hsb}{ 0.69,0.548,0.988}
+    \definecolor{module6}{hsb}{ 0.56,0.500,0.912}
+    \definecolor{module7}{hsb}{ 0.75,0.376,0.962}
+    \definecolor{module8}{hsb}{ 1   ,0.700,1}
+    \definecolor{module9}{hsb}{ 0.62,0.452,0.975}
+    \definecolor{module10}{hsb}{0.12,0.675,0.956}
+    \definecolor{module11}{hsb}{0.88,0.700,0.969}
+    \definecolor{module12}{hsb}{0.81,0.624,0.925}
+    \definecolor{module13}{hsb}{0.38,0.476,0.919}
+    \definecolor{module14}{hsb}{0.50,0.524,0.994}
+    \definecolor{module15}{hsb}{0.31,0.652,0.944}
+    \definecolor{module16}{hsb}{0.06,0.324,0.906}
+    \definecolor{module17}{hsb}{   1,    1,    1}
+  },
+  screen colors 3/.code={
+    \definecolor{module1}{hsb}{ 0.00,0.53,0.931}
+    \definecolor{module2}{hsb}{ 0.33,0.77,0.95}
+    \definecolor{module3}{hsb}{ 0.67,0.42,0.938}
+    \definecolor{module4}{hsb}{ 0.17,0.65,0.981}
+    \definecolor{module5}{hsb}{ 0.50,0.88,0.988}
+    \definecolor{module6}{hsb}{ 0.83,0.36,0.912}
+    \definecolor{module7}{hsb}{ 0.08,0.59,0.962}
+    \definecolor{module8}{hsb}{ 0.42,0.82,1}
+    \definecolor{module9}{hsb}{ 0.75,0.48,0.975}
+    \definecolor{module10}{hsb}{0.25,0.71,0.956}
+    \definecolor{module11}{hsb}{0.58,0.94,0.969}
+    \definecolor{module12}{hsb}{0.92,0.57,0.925}
+    \definecolor{module13}{hsb}{0.38,0.80,0.919}
+    \definecolor{module14}{hsb}{0.71,0.34,0.994}
+    \definecolor{module15}{hsb}{0.05,0.68,0.944}
+    \definecolor{module16}{hsb}{0.55,0.92,0.906}
+    \definecolor{module17}{hsb}{0.88,0.45,    1}
+  },
+  print colors/.code={
+    \colorlet{module1}{black!3}
+    \colorlet{module2}{black!21}
+    \colorlet{module3}{black!5}
+    \colorlet{module4}{black!11}
+    \colorlet{module5}{black!7}
+    \colorlet{module6}{black!14}
+    \colorlet{module7}{black!1}
+    \colorlet{module8}{black!9}
+    \colorlet{module9}{black!19}
+    \colorlet{module10}{black!4}
+    \colorlet{module11}{black!18}
+    \colorlet{module12}{black!8}
+    \colorlet{module13}{black!13}
+    \colorlet{module14}{black!20}
+    \colorlet{module15}{black!14}
+    \colorlet{module16}{black!14}
+    \colorlet{module17}{black!14}
+  },
+  screen colors 3% set screen colors by default
+}
+% l'environnement planning
+% qui utilise tikzpicture
+% #1 est le (tikz-)style optionnel du planning
+\newenvironment{planning}[1][]
+{
+  \begin{tikzpicture}[#1]
+    % tracer les lignes horizontales
+    \foreach \d in {0,...,\daysperweek}{
+      \draw[ligne jour/.try] (-\wdaylabel-\wgroupelabel,\d*\hday) -- (\wplanning,\d*\hday);
+      \ifnum\numberofgroups > 1\relax
+        \ifnum\d < \daysperweek\relax
+          \foreach \g in {1,...,\the\numexpr\numberofgroups-1\relax}
+            \draw[very thin, ligne groupe/.try] (-\wgroupelabel,\d*\hday+\g*\hgroupe) -- (\wplanning,\d*\hday+\g*\hgroupe);
+        \fi
+      \fi
+    }
+    % tracer les lignes verticales
+    \draw[lignes verticales/.try]
+      (-\wdaylabel-\wgroupelabel,0) -- +(0,\hplanning)
+      (-\wgroupelabel,0) -- +(0,\hplanning)
+      (0,0) -- +(0,\hplanning)
+      (\wplanning,0) -- +(0,\hplanning)
+      ;
+    % mettre les étiquettes verticales (jours et groupes)
+    \foreach[count=\dn from 0] \d in {lundi,mardi,mercredi,jeudi,vendredi,samedi}{
+      \ifnum\dn < \daysperweek\relax
+        \node[scale=2,etiquette jour/.try] at (-.5\wdaylabel-\wgroupelabel,\dn*\hday+.5\hday) {\d};
+        \foreach \g in {1,...,\numberofgroups}
+          \node[etiquette groupe/.try] at (-.5\wgroupelabel,\dn*\hday+\g*\hgroupe-.5\hgroupe) {G\g};
+      \fi
+    }
+    % mettre les heures (étiquettes horizontales et lignes verticales)
+    \foreach[count=\hourlabel from \startinghour] \h in {1,...,\hoursperday}{
+      \ifnum\h > 1\relax
+        \draw[draw=black!49,ligne heure/.try] [xshift=(\h-1)*\hour]
+          (0,-\hhouroffset) node[above,font=\sffamily,etiquette heure/.try]{\hourlabel:00}
+            -- (0,\hplanning);
+      \fi
+        \draw[draw=black!35,very thin,ligne demi-heure/.try] [xshift=(\h-.5)*\hour]
+          (0,-\hhouroffset/2) node[scale=.7,above,font=\sffamily,etiquette heure/.try,etiquette demi-heure/.try]{\hourlabel:30}
+            -- (0,\hplanning);
+    }
+}{
+  \end{tikzpicture}
+}
+
+% l'environnement module qui permet de définir le numéro et le nom du module
+% le compteur du module est utiliser pour lui attribuer une couleur
+\newcounter{module}\setcounter{module}{0}
+\newenvironment{module}[2]{
+  \xdef\numeromodule{#1}
+  \xdef\titremodule{#2}
+  \stepcounter{module}
+  \begin{scope}%
+}{\end{scope}}

@@ -1,0 +1,105 @@
+\documentclass[varwidth=29cm,border=7pt]{standalone}
+\usepackage{planning}
+
+% =================================================================
+% les paramètres du planning et les styles des cours, td, ...
+% =================================================================
+\tikzset{
+  largeur du planning = 21cm,
+  hauteur du planning = 17cm,
+  largeur du nom du jour = 4cm,
+  largeur du nom du groupe = 1cm,
+  hauteur du deplacement vertical des heures = 4mm,
+  nombre de jours = 5,
+  nombre d'heures=11, % nombre d'heures par jour
+  heure du debut=8,
+  % -----------------------------------------------------
+  % il y a aussi les style optionnels
+  % -----------------------------------------------------
+  % etiquette jour
+  % etiquette groupe
+  % etiquette heure
+  % etiquette demi-heure
+  % ligne jour
+  % ligne groupe
+  % ligne heure
+  % ligne demi-heure
+  % lignes verticales
+  % -----------------------------------------------------
+  cours/.style={
+    titre/.append style={echelle=1.05,font=\bfseries},
+    sur-titre/.append style={echelle=.85},
+    salle/.append style={echelle=.7},
+    line width=.7pt,
+  },
+}
+
+% =================================================================
+% les commandes basées sur \creneau
+%   \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+% =================================================================
+\newcommand{\cours}[5][]{% \cours{groupe}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{\titremodule}{Cours \numeromodule}{#5}{#3}{#2}{#4}%
+}
+\newcommand{\autre}[5][]{% \autre{groupe}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{\titremodule}{\numeromodule}{#5}{#3}{#2}{#4}%
+}
+
+\begin{document}
+  \begin{center}
+    \Huge CAPES - Mathématiques - 2020/21 « Planning approximatif »
+  \end{center}
+
+  \begin{planning}[cacher etiquettes groupes,screen colors 1]
+
+    % ---------------------------------------------------------------
+    \begin{module}{UE 5}{C.~Caux}
+      \cours{}{lundi}{09:00-12:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{UE 2}{G.~Jouves}
+      \cours{}{lundi}{13:30-16:30}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{UE 1}{Math pour l'enseignement}
+      \cours{}{mardi}{08:00-12:00}{}
+      \cours{1/2}{mercredi}{13:30-16:30}{}
+      \cours{1/2}{jeudi}{13:30-16:30}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{Anglais}{N.~Chapel}
+      \cours{}{mardi}{13:30-16:30}{SUP - salles 11/12}
+    \end{module}
+    \begin{module}{Leçons}{}
+    % ---------------------------------------------------------------
+      \creneau[cours]{\titremodule}{\numeromodule}{}{mardi}{}{16:30-18:30}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{mercredi}{2/2}{09:00-12:00}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{mercredi}{2/2}{13:30-16:30}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{jeudi}{2/2}{13:30-16:30}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{vendredi}{2/2}{13:30-16:30}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{Problème}{}
+      \creneau[cours]{\titremodule}{\numeromodule}{5 heures}{mercredi}{1/2}{08:00-13:00}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{TICE}{T.~Loof}
+      \creneau[cours]{\titremodule}{\numeromodule}{Groupe 1}{jeudi}{}{08:00-10:00}
+      \creneau[cours]{\titremodule}{\numeromodule}{Groupe 2}{jeudi}{}{10:00-12:00}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{UE4}{ESPE de Villeneuve d'Ascq}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{vendredi}{}{08:30-11:30}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{UE3}{Recherche}
+      \creneau[cours]{\titremodule}{\numeromodule}{}{vendredi}{1/2}{13:30-16:30}
+    \end{module}
+    % ---------------------------------------------------------------
+  \end{planning}
+
+  \begin{itemize}
+    \item La plupart des créneaux sont susceptibles de varier d'une semaine à l'autre.
+    \item Pour connaître le « vrai » planning de la semaine il faut se rendre dans le document Google Docs.
+  \end{itemize}
+\end{document}
