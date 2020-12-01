@@ -1,0 +1,116 @@
+\documentclass[varwidth=29cm,border=7pt]{standalone}
+\usepackage{planning}
+
+% =================================================================
+% les paramètres du planning et les styles des cours, td, ...
+% =================================================================
+\tikzset{
+  largeur du planning = 21cm,
+  hauteur du planning = 17cm,
+  largeur du nom du jour = 4cm,
+  largeur du nom du groupe = 1cm,
+  hauteur du deplacement vertical des heures = 4mm,
+  nombre de jours = 5,
+  nombre d'heures=11, % nombre d'heures par jour
+  heure du debut=8,
+  nombre de groupes=1,
+  % -----------------------------------------------------
+  % il y a aussi les style optionnels
+  % -----------------------------------------------------
+  % etiquette jour
+  % etiquette groupe
+  % etiquette heure
+  % etiquette demi-heure
+  % ligne jour
+  % ligne groupe
+  % ligne heure
+  % ligne demi-heure
+  % lignes verticales
+  % -----------------------------------------------------
+  cours/.style={
+    titre/.append style={echelle=1.05, align=center},
+    sur-titre/.append style={echelle=.85},
+    salle/.append style={echelle=.7},
+    line width=.7pt,
+  },
+}
+
+% =================================================================
+% les commandes basées sur \creneau
+%   \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+% =================================================================
+\newcommand{\cours}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{Cours}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+}
+\newcommand{\td}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+}
+\newcommand{\courstd}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{Cours-TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+}
+
+
+\begin{document}
+  \begin{center}
+    \Huge M1 Mathématiques - 2020/21 « Planning prévisionnel » du S2
+  \end{center}
+
+  \begin{planning}[cacher etiquettes groupes,screen colors 1]
+
+    % ---------------------------------------------------------------
+    \begin{module}{}{Proba-stats}
+      \td{M.~Maïda}{lundi}{08:00-10:00}{}
+      \cours{M.~Maïda}{lundi}{10:15-12:15}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Hist. des Maths}
+      \courstd{R.~Tazziol}{lundi}{13:00-18:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{An. complexe}
+      \td{M.~Dimitrov}{mardi}{08:30-10:00}{}
+      \cours{C.~Zhang}{mardi}{10:15-12:15}{}
+      \td{M.~Dimitrov}{mercredi}{16:30-18:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{OPM}
+      \courstd[titre/.append style={text width=35mm}]{P.~Popescu-Pampu\linebreak T.~Rey}{mardi}{13:00-14:30}{}
+      \courstd[titre/.append style={text width=35mm}]{K.~Tzanev}{mardi\linebreak T.~Rey}{14:45-16:15}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Topo. Alg.}
+      \td{A.~Virelizier}{mardi}{16:30-18:00}{}
+      \td{A.~Virelizier}{jeudi}{08:00-10:00}{}
+      \cours{I.~Dell'Ambrogio}{jeudi}{10:15-12:15}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{An.num. EDP}
+      \td{A.~de~Laire}{mercredi}{08:30-10:00}{}
+      \cours{A.~de~Laire}{mercredi}{10:15-12:15}{}
+      \td{A.~de~Laire}{vendredi}{08:30-10:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Anglais Math.}
+      \courstd{G.~Bhowmik}{mercredi}{13:00-14:30}{}
+      \courstd{G.~Bhowmik}{mercredi}{14:45-16:15}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Info}
+      \courstd{A.~Broustet}{jeudi}{13:00-18:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Th. de Galois}
+      \cours{A.~Broustet}{vendredi}{10:15-12:15}{}
+      \td{R.~Freitas}{vendredi}{13:00-14:30}{}
+      \td{R.~Freitas}{vendredi}{14:45-16:15}{}
+    \end{module}
+    % ---------------------------------------------------------------
+
+  \end{planning}
+
+  \begin{itemize}
+    \item Remarque 1
+    \item Remarque 2
+  \end{itemize}
+\end{document}
+
