@@ -29,19 +29,19 @@
   cours/.style={
     titre/.append style={echelle=1.05,font=\bfseries},
     sur-titre/.append style={echelle=.85},
-    salle/.append style={echelle=.7},
+    sous-titre/.append style={echelle=.7},
     line width=.7pt,
   },
 }
 
 % =================================================================
 % les commandes basées sur \creneau
-%   \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+%   \creneau[style]{surtitre}{titre}{sous-titre}{jour}{groupe}{horaires}
 % =================================================================
-\newcommand{\cours}[5][]{% \cours{groupe}{jour}{08:00-10:00}{amphi}
+\newcommand{\cours}[5][]{% \cours{groupe}{jour}{08:00-10:00}{sous-titre}
   \creneau[cours,#1]{\titremodule}{Cours \numeromodule}{#5}{#3}{#2}{#4}%
 }
-\newcommand{\autre}[5][]{% \autre{groupe}{jour}{08:00-10:00}{amphi}
+\newcommand{\autre}[5][]{% \autre{groupe}{jour}{08:00-10:00}{sous-titre}
   \creneau[cours,#1]{\titremodule}{\numeromodule}{#5}{#3}{#2}{#4}%
 }
 
@@ -72,28 +72,28 @@
     \end{module}
     \begin{module}{Leçons}{}
     % ---------------------------------------------------------------
-      \creneau[cours]{\titremodule}{\numeromodule}{}{mardi}{}{16:30-18:30}
-      \creneau[cours]{\titremodule}{\numeromodule}{si pas de problème}{mercredi}{2/2}{09:00-12:00}
-      \creneau[cours]{\titremodule}{\numeromodule}{si pas de cours}{mercredi}{2/2}{13:30-16:30}
-      \creneau[cours]{\titremodule}{\numeromodule}{si pas de cours}{jeudi}{2/2}{13:30-16:30}
-      \creneau[cours]{\titremodule}{\numeromodule}{si pas de cours}{vendredi}{2/2}{13:30-16:30}
+      \autre{}{mardi}{16:30-18:30}{}
+      \autre{2/2}{mercredi}{09:00-12:00}{si pas de problème}
+      \autre{2/2}{mercredi}{13:30-16:30}{si pas de cours}
+      \autre{2/2}{jeudi}{13:30-16:30}{si pas de cours}
+      \autre{2/2}{vendredi}{13:30-16:30}{si pas de cours}
     \end{module}
     % ---------------------------------------------------------------
     \begin{module}{Problème}{}
-      \creneau[cours]{\titremodule}{\numeromodule}{5 heures}{mercredi}{1/2}{08:00-13:00}
+      \autre{1/2}{mercredi}{08:00-13:00}{5 heures}
     \end{module}
     % ---------------------------------------------------------------
     \begin{module}{TICE}{T.~Loof}
-      \creneau[cours]{\titremodule}{\numeromodule}{Groupe 1}{jeudi}{}{08:00-10:00}
-      \creneau[cours]{\titremodule}{\numeromodule}{Groupe 2}{jeudi}{}{10:00-12:00}
+      \autre{}{jeudi}{08:00-10:00}{Groupe 1}
+      \autre{}{jeudi}{10:00-12:00}{Groupe 2}
     \end{module}
     % ---------------------------------------------------------------
     \begin{module}{UE4}{ESPE de Villeneuve d'Ascq}
-      \creneau[cours]{\titremodule}{\numeromodule}{}{vendredi}{}{08:30-11:30}
+      \autre{}{vendredi}{08:30-11:30}{}
     \end{module}
     % ---------------------------------------------------------------
     \begin{module}{UE3}{Recherche}
-      \creneau[cours]{\titremodule}{\numeromodule}{}{vendredi}{1/2}{13:30-16:30}
+      \autre{1/2}{vendredi}{13:30-16:30}{}
     \end{module}
     % ---------------------------------------------------------------
   \end{planning}

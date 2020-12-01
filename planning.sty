@@ -15,7 +15,7 @@
     \pgfkeysalso{\pgfkeyscurrentpath/.code=\pgfmathsetlength#1{##1}}% calculate and store the length
   }
 }
-% calcul de quelque longueurs supplémentaires
+% calcul de quelques longueurs supplémentaires
 \newlength{\hour} % largeur d'une heure
 \newlength{\minute} % largeur d'une minute
 \newlength{\hday} % hauteur d'une journée
@@ -49,13 +49,13 @@
   % nombre d'heures par jour
   nombre d'heures/.estore in=\hoursperday,
   nombre d'heures=10,
-  % premier heure de la journée
+  % première heure de la journée
   heure du debut/.estore in=\startinghour,
   heure du debut=8,
   % nombre de groupes
   nombre de groupes/.estore in=\numberofgroups,
   nombre de groupes=3,
-  % les méthodes qui demande le recalcule des longueurs
+  % les méthodes qui demandent le recalcule des longueurs
   largeur du planning/.append code=\calculatelengths,
   hauteur du planning/.append code=\calculatelengths,
   nombre de jours/.append code=\calculatelengths,
@@ -79,7 +79,7 @@
 }
 \calculatelengths
 
-% définition du style `pos` qui peut être utiliser ainsi
+% définition du style `pos` qui peut être utilisé ainsi
 % [pos={1}{1}{09}{10}] pour positionner un point ( , ) à la place de
 %   mardi(1), en bas du groupe 1 (= en haut du groupe 2) à 9 heure et 10 minutes
 \tikzset{
@@ -106,6 +106,7 @@
   \xdef\tom{#4}%
   \setlength{\duree}{\the\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
 }
+% \parsegroupe est un macro utilitaire pour \groupe
 \def\parsegroupe#1/#2/#3endparsegroupe{
   \ifx\hfuzz#1\hfuzz
     \xdef\grp{1}
@@ -119,10 +120,14 @@
     \fi
   \fi
 }
+% \groupe permet plusieurs types de paramètres
+% - vide => groupe 1 parmi 1 groupes
+% - k => groupe k parmi \numberofgroups groupes
+% - k/m => groupe k parmi m groupes
 \def\groupe#1;{
   \parsegroupe#1//endparsegroupe
 }
-% les styles (couleurs, épaisseur des traits, ...) du planning
+% les styles (couleurs, épaisseur des traits...) du planning
 \tikzset{
   fond/.style = {draw,fill=module\arabic{module}},
   heure/.style = {inner sep=2pt,outer sep=0,draw,fill=black,fill opacity=.1,text opacity=1,scale=.7},
@@ -134,7 +139,7 @@
   },
   titre/.style={},
   sur-titre/.style={above,font={\sffamily\hyphenchar\font=-1},text width=\duree,align=center},
-  salle/.style={below,black!84,font=\sffamily\it,text width=\duree,align=center},
+  sous-titre/.style={below,black!84,font=\sffamily\it,text width=\duree,align=center},
 }
 % définition de \joursemaine
 % qui renvoie le numéro du jour de la semaine en fonction du nom :
@@ -155,11 +160,11 @@
 % #1 est un style optionnel, par exemple {fond/.style={fill=red}}
 % #2 est le "sur-titre"
 % #3 est le "titre"
-% #4 est le "sous-titre" utiliser en général pour la salle
+% #4 est le "sous-titre" utilisé en général pour la salle
 % #5 est le jour, entre 1 et \daysperweek
-% #6 est le groupe, entre 1 et \numberofgroups
+% #6 est le groupe, entre 1 et \numberofgroups, ou de la forme n/m qui signifie le groupe n parmi m
 % #7 sont les horaires, sous la forme {08:00-10:30} utilisée par \horaires
-\newcommand{\creneau}[7][]{% \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+\newcommand{\creneau}[7][]{% \creneau[style]{surtitre}{titre}{sous-titre}{jour}{groupe}{horaires}
   \edef\jour{\joursemaine#5;}
   \horaires#7;
   \groupe#6;
@@ -168,23 +173,30 @@
   \edef\fromg{\grp-1}
   \edef\tog{\grp}
   \begin{scope}[nombre de groupes=\ngrps,#1]
+    % définitions des coordonnées (start), (end) et (mid) du créneau
     \path[fond]
       [pos={\fromd}{\fromg}{\fromh}{\fromm}] coordinate (start)
       [pos={\tod}{\tog}{\toh}{\tom}] coordinate (end)
       (start) rectangle coordinate (mid) (end)
     ;
+    % affiche les heures de début et de fin
     \path
       (start) node[heure debut]{\fromh:\fromm}
       (start-|end) node[heure fin]{\toh:\tom}
     ;
+    % affiche le titre, le sur-titre et le sous-titre
     \path
       (mid) node[titre](module){#3}
-      (module.north) node[sur-titre]{#2}
-      (module.south) node[salle]{#4}
+      \ifx\hfuzz#2\hfuzz\else
+        (module.north) node[sur-titre]{#2}
+      \fi
+      \ifx\hfuzz#4\hfuzz\else
+        (module.south) node[sous-titre]{#4}
+      \fi
     ;
   \end{scope}
 }
-% definition des couleurs des modules par défault
+% définition des couleurs des modules par défaut
 \tikzset{
   screen colors 1/.code={
     \definecolor{module1}{HTML}{ffe119}
@@ -262,7 +274,7 @@
     \colorlet{module16}{black!14}
     \colorlet{module17}{black!14}
   },
-  screen colors 3% set screen colors by default
+  screen colors 3% les couleurs par défaut
 }
 % l'environnement planning
 % qui utilise tikzpicture
@@ -311,7 +323,7 @@
 }
 
 % l'environnement module qui permet de définir le numéro et le nom du module
-% le compteur du module est utiliser pour lui attribuer une couleur
+% le compteur du module est utilisé pour lui attribuer une couleur
 \newcounter{module}\setcounter{module}{0}
 \newenvironment{module}[2]{
   \xdef\numeromodule{#1}
