@@ -1,0 +1,122 @@
+\documentclass[varwidth=29cm,border=7pt]{standalone}
+\usepackage{planning}
+
+% =================================================================
+% les paramètres du planning et les styles des cours, td, ...
+% =================================================================
+\tikzset{
+  largeur du planning = 21cm,
+  hauteur du planning = 17cm,
+  largeur du nom du jour = 4cm,
+  largeur du nom du groupe = 1cm,
+  hauteur du deplacement vertical des heures = 4mm,
+  nombre de jours = 5,
+  nombre d'heures=11, % nombre d'heures par jour
+  heure du debut=8,
+  nombre de groupes=3,
+  % -----------------------------------------------------
+  % il y a aussi les style optionnels
+  % -----------------------------------------------------
+  % etiquette jour
+  % etiquette groupe
+  % etiquette heure
+  % etiquette demi-heure
+  % ligne jour
+  % ligne groupe
+  % ligne heure
+  % ligne demi-heure
+  % lignes verticales
+  % -----------------------------------------------------
+  cours/.style={
+    titre/.append style={echelle=1.05, align=center},
+    sur-titre/.append style={echelle=.85},
+    salle/.append style={echelle=.7},
+    line width=.7pt,
+  },
+}
+
+% =================================================================
+% les commandes basées sur \creneau
+%   \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
+% =================================================================
+\newcommand{\cours}[4][]{% \cours{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{Cours}{\numeromodule{} \titremodule}{#4}{#2}{}{#3}%
+}
+\newcommand{\td}[5][]{% \cours{groupe}{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{TD groupe #2}{\numeromodule{} \titremodule}{#5}{#3}{#2}{#4}%
+}
+\newcommand{\tp}[4][]{% \cours{jour}{08:00-10:00}{amphi}
+  \creneau[cours,#1]{TP}{\numeromodule{} \titremodule}{#4}{#2}{}{#3}%
+}
+
+
+
+\begin{document}
+  \begin{center}
+    \Huge L2 Mathématiques - 2020/21 « Planning prévisionnel » du S2
+  \end{center}
+
+  \begin{planning}[screen colors 1]
+
+    % ---------------------------------------------------------------
+    \begin{module}{M41}{Analyse}
+      \cours{mardi}{10:15-11:45}{}
+      \td{1}{lundi}{13:00-14:30}{}
+      \td{1}{mardi}{08:30-10:00}{}
+      \td{2}{lundi}{13:00-14:30}{}
+      \td{2}{jeudi}{8:30-10:00}{}
+      \td{3}{mardi}{08:30-10:00}{}
+      \td{3}{mercredi}{10:15-11:45}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{M42}{Algèbre}
+      \cours{vendredi}{08:00-10:00}{}
+      \td{1}{lundi}{14:45-16:15}{}
+      \td{1}{jeudi}{13:00-14:30}{}
+      \td{2}{lundi}{14:45-16:15}{}
+      \td{2}{mardi}{13:00-14:30}{}
+      \td{3}{lundi}{10:15-11:45}{}
+      \td{3}{vendredi}{10:15-11:45}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{M43}{Probabilités}
+      \cours{mercredi}{08:30-10:00}{}
+      \td{1}{mercredi}{10:15-11:45}{}
+      \td{1}{vendredi}{10:15-11:45}{}
+      \td{2}{mardi}{08:30-10:00}{}
+      \td{2}{jeudi}{13:00-14:30}{}
+      \td{3}{lundi}{14:45-16:15}{}
+      \td{3}{jeudi}{13:00-14:30}{}
+      \tp{lundi}{16:30-18:30}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{M44}{Géométrie}
+      \cours{jeudi}{10:15-11:45}{}
+      \td{1}{lundi}{10:15-11:45}{}
+      \td{1}{jeudi}{8:30-10:00}{}
+      \td{2}{mercredi}{10:15-11:45}{}
+      \td{2}{vendredi}{10:15-11:45}{}
+      \td{3}{lundi}{13:00-14:30}{}
+      \td{3}{jeudi}{8:30-10:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Anglais}
+      \cours{lundi}{08:00-10:00}{}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{TeX}
+      \cours{vendredi}{13:00-15:00}{3 séances par groupe}
+    \end{module}
+    % ---------------------------------------------------------------
+    \begin{module}{}{Explorations\\mathématiques}
+      \cours{jeudi}{14:45-16:15}{}
+      \cours{vendredi}{15:15-16:45}{}
+    \end{module}
+  \end{planning}
+
+  \begin{itemize}
+    \item Remarque 1
+    \item Remarque 2
+  \end{itemize}
+\end{document}
+
