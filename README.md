@@ -4,6 +4,7 @@ Ce dépôt est un exemple d'utilisation du style [planning.sty](planning.sty) po
 
 Les exemples disponibles :
 
+- Le planning du L2 Math pour 2020/21 sous format [pdf](L2S2-Planning-2020-2021.pdf) et la source [tex](L2S2-Planning-2020-2021.tex).
 - Le planning du M1 CAPES pour 2020/21 sous format [pdf](CAPES-Planning-2020-2021.pdf) et la source [tex](CAPES-Planning-2020-2021.tex).
 - Le planning du M1 Math pour 2020/21 sous format [pdf](M1-Planning-2020-2021.pdf) et la source [tex](M1-Planning-2020-2021.tex).
 
