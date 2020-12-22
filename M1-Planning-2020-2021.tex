@@ -40,13 +40,13 @@
 %   \creneau[style]{surtitre}{titre}{salle}{jour}{groupe}{horaires}
 % =================================================================
 \newcommand{\cours}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
-  \creneau[cours,#1]{Cours}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+  \creneau[cours,#1]{Cours}{\textbf{\titremodule}\\\small #2}{#5}{#3}{1}{#4}%
 }
 \newcommand{\td}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
-  \creneau[cours,#1]{TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+  \creneau[cours,#1]{TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{1}{#4}%
 }
 \newcommand{\courstd}[5][]{% \cours{enseignants}{jour}{08:00-10:00}{amphi}
-  \creneau[cours,#1]{Cours-TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{}{#4}%
+  \creneau[cours,#1]{Cours-TD}{\textbf{\titremodule}\\\small #2}{#5}{#3}{1}{#4}%
 }
 
 
@@ -55,7 +55,7 @@
     \Huge M1 Mathématiques - 2020/21 « Planning prévisionnel » du S2
   \end{center}
 
-  \begin{planning}[cacher etiquettes groupes,screen colors 1]
+  \begin{planning}[screen colors 1]
 
     % ---------------------------------------------------------------
     \begin{module}{}{Proba-stats}
@@ -106,7 +106,7 @@
     \end{module}
     % ---------------------------------------------------------------
 
-  \end{planning}
+  \end{planning}\hspace{1cm}
 
   \begin{itemize}
     \item Remarque 1

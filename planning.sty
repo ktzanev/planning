@@ -20,6 +20,18 @@
 \newlength{\minute} % largeur d'une minute
 \newlength{\hday} % hauteur d'une journée
 \newlength{\hgroupe} % hauteur d'un groupe
+% le nombre de groupes doit être un entier > 0
+% si il y a un seul groupe, on ne l'affiche pas
+\newcommand*\normalizenumberofgroups{
+  \edef\numberofgroups{\the\numexpr\numberofgroups\relax}
+  \ifnum\numberofgroups<1\relax
+    \edef\numberofgroups{1}
+  \fi
+  \ifnum\numberofgroups=1\relax
+    \pgfkeysalso{cacher etiquettes groupes}
+  \fi
+}
+% recalcule les longueurs après changement des paramètres
 \newcommand*\calculatelengths{
   \setlength{\hour}{\dimexpr\wplanning / \hoursperday\relax} % largeur d'une heure
   \setlength{\minute}{\dimexpr\hour / 60\relax} % largeur d'une minute
@@ -54,6 +66,7 @@
   heure du debut=8,
   % nombre de groupes
   nombre de groupes/.estore in=\numberofgroups,
+  nombre de groupes/.append code=\normalizenumberofgroups,
   nombre de groupes=3,
   % les méthodes qui demandent le recalcule des longueurs
   largeur du planning/.append code=\calculatelengths,
@@ -106,18 +119,29 @@
   \xdef\tom{#4}%
   \setlength{\duree}{\the\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
 }
+% \parsegroupelen est un macro utilitaire pour \parsegroupe
+% le paramètre attendu est de la forme `2-3` ou `2`
+% un paramètre `2` est équivalent à `2-2`
+\def\parsegroupelen#1-#2-#3endparsegroupe{
+  \ifx\hfuzz#1\hfuzz
+    \edef\fromg{0}
+    \edef\tog{1}
+  \else
+    \edef\fromg{#1-1}
+    \ifx\hfuzz#2\hfuzz
+      \edef\tog{#1}
+    \else
+      \edef\tog{#2}
+    \fi
+  \fi
+}
 % \parsegroupe est un macro utilitaire pour \groupe
 \def\parsegroupe#1/#2/#3endparsegroupe{
-  \ifx\hfuzz#1\hfuzz
-    \xdef\grp{1}
-    \xdef\ngrps{1}
+  \parsegroupelen#1--endparsegroupe
+  \ifx\hfuzz#2\hfuzz
+    \edef\ngrps{\numberofgroups}
   \else
-    \xdef\grp{#1}
-    \ifx\hfuzz#2\hfuzz
-      \xdef\ngrps{\numberofgroups}
-    \else
-      \xdef\ngrps{#2}
-    \fi
+    \edef\ngrps{#2}
   \fi
 }
 % \groupe permet plusieurs types de paramètres
@@ -170,8 +194,6 @@
   \groupe#6;
   \edef\fromd{\jour-1}
   \edef\tod{\jour-1}
-  \edef\fromg{\grp-1}
-  \edef\tog{\grp}
   \begin{scope}[nombre de groupes=\ngrps,#1]
     % définitions des coordonnées (start), (end) et (mid) du créneau
     \path[fond]
