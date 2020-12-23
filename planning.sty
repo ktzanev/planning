@@ -74,6 +74,13 @@
   nombre de jours/.append code=\calculatelengths,
   nombre d'heures/.append code=\calculatelengths,
   nombre de groupes/.append code=\calculatelengths,
+  % pour cacher la colonne avec les groupes
+  % ce style est évoqué automatiquement par `nombre de groupes=1`
+  cacher etiquettes groupes/.style={
+    largeur du nom du groupe=0,
+    etiquette groupe/.style={opacity=0},
+    ligne groupe/.style={draw=none}
+  }
   % il y a aussi les style optionnels utilisé avec /.try
   % etiquette jour
   % etiquette groupe
@@ -84,17 +91,13 @@
   % ligne heure
   % ligne demi-heure
   % lignes verticales
-  cacher etiquettes groupes/.style={
-    largeur du nom du groupe=0,
-    etiquette groupe/.style={opacity=0},
-    ligne groupe/.style={draw=none}
-  }
 }
 \calculatelengths
 
 % définition du style `pos` qui peut être utilisé ainsi
-% [pos={1}{1}{09}{10}] pour positionner un point ( , ) à la place de
-%   mardi(1), en bas du groupe 1 (= en haut du groupe 2) à 9 heure et 10 minutes
+% [pos={0}{1}{09}{10}] pour positionner un point ( , ) à la place de
+%   lundi(0), à la séparation entre les groupes 1 et 2, à 9 heure et 10 minutes
+% ces paramètres sont des entier car il sont évalués avec `\numexpr`
 \tikzset{
   every picture/.style={yscale=-1},
   pos/.style n args={4}{
@@ -113,10 +116,10 @@
 % dans \fromh, \fromm, \toh, \tom, puis calcule la longeur \duree
 \newlength{\duree}
 \def\horaires#1:#2-#3:#4;{%
-  \xdef\fromh{#1}%
-  \xdef\fromm{#2}%
-  \xdef\toh{#3}%
-  \xdef\tom{#4}%
+  \edef\fromh{#1}%
+  \edef\fromm{#2}%
+  \edef\toh{#3}%
+  \edef\tom{#4}%
   \setlength{\duree}{\the\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
 }
 % \parsegroupelen est un macro utilitaire pour \parsegroupe
@@ -136,6 +139,10 @@
   \fi
 }
 % \parsegroupe est un macro utilitaire pour \groupe
+% le paramètre attendu est de la forme `1/3` ou `1`
+% un paramètre `1` est équivalent à `1/\numberofgroups`
+% où \numberofgroups est le nombre de groupes par défaut
+% établi par `nombre de groupes=`
 \def\parsegroupe#1/#2/#3endparsegroupe{
   \parsegroupelen#1--endparsegroupe
   \ifx\hfuzz#2\hfuzz
@@ -144,10 +151,13 @@
     \edef\ngrps{#2}
   \fi
 }
-% \groupe permet plusieurs types de paramètres
-% - vide => groupe 1 parmi 1 groupes
-% - k => groupe k parmi \numberofgroups groupes
-% - k/m => groupe k parmi m groupes
+% \groupe défini la position et la taille du créneau dans une journée
+% le paramètre attendu est de la forme {k-l/m} où qui signifie:
+% - k-l/m => groupe qui occupe la place des groupes k à l parmi m groupes
+% k,l et m peuvent être manquant, et ainsi avoir des paramètres de la forme
+% - {k/m} => groupe k parmi m groupes
+% - {k} => groupe k parmi \numberofgroups groupes (équivalent à k-k)
+% - {k-l} => groupe qui occupe la place des groupes k à l parmi \numberofgroups groupes
 \def\groupe#1;{
   \parsegroupe#1//endparsegroupe
 }
@@ -158,7 +168,7 @@
   heure debut/.style={heure, below right},
   heure fin/.style={heure, below left},
   echelle/.code={
-    \pgfmathsetmacro{\scalefactor}{#1/(1+\numberofgroups/7)}% sqrt(2) = 1.4142135623730951
+    \pgfmathsetmacro{\scalefactor}{#1/(1+\numberofgroups/7)}% facteur ajusté en fonction du nombre de groupes
     \pgfkeysalso{scale={\scalefactor},inner sep=2*\scalefactor pt}%
   },
   titre/.style={},
@@ -185,8 +195,8 @@
 % #2 est le "sur-titre"
 % #3 est le "titre"
 % #4 est le "sous-titre" utilisé en général pour la salle
-% #5 est le jour, entre 1 et \daysperweek
-% #6 est le groupe, entre 1 et \numberofgroups, ou de la forme n/m qui signifie le groupe n parmi m
+% #5 est le jour de la forme "lundi" ou "lun" ou même "l"
+% #6 est le groupe, de la forme {k}, {k-l}, {k/m} ...voir \groupe pour plus d'infos
 % #7 sont les horaires, sous la forme {08:00-10:30} utilisée par \horaires
 \newcommand{\creneau}[7][]{% \creneau[style]{surtitre}{titre}{sous-titre}{jour}{groupe}{horaires}
   \edef\jour{\joursemaine#5;}
