@@ -213,8 +213,8 @@
     ;
     % affiche les heures de début et de fin
     \path
-      (start) node[heure debut]{\fromh:\fromm}
-      (start-|end) node[heure fin]{\toh:\tom}
+      (start) node[heure debut]{\NoAutoSpacing\fromh:\fromm}
+      (start-|end) node[heure fin]{\NoAutoSpacing\toh:\tom}
     ;
     % affiche le titre, le sur-titre et le sous-titre
     \path
@@ -343,11 +343,11 @@
     \foreach[count=\hourlabel from \startinghour] \h in {1,...,\hoursperday}{
       \ifnum\h > 1\relax
         \draw[draw=black!49,ligne heure/.try] [xshift=(\h-1)*\hour]
-          (0,-\hhouroffset) node[above,font=\sffamily,etiquette heure/.try]{\hourlabel:00}
+          (0,-\hhouroffset) node[above,font=\sffamily,etiquette heure/.try]{\NoAutoSpacing\hourlabel:00}
             -- (0,\hplanning);
       \fi
         \draw[draw=black!35,very thin,ligne demi-heure/.try] [xshift=(\h-.5)*\hour]
-          (0,-\hhouroffset/2) node[scale=.7,above,font=\sffamily,etiquette heure/.try,etiquette demi-heure/.try]{\hourlabel:30}
+          (0,-\hhouroffset/2) node[scale=.7,above,font=\sffamily,etiquette heure/.try,etiquette demi-heure/.try]{\NoAutoSpacing\hourlabel:30}
             -- (0,\hplanning);
     }
 }{
