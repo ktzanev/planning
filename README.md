@@ -115,3 +115,7 @@ Pour redéfinir la couleur du troisième module il suffit de faire par exemple 
 ```latex
 \colorlet{module3}{red}
 ```
+
+### Questions fréquentes
+
+La page [FAQ](faq.md) contient des réponses à des questions particulières.
