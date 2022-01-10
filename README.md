@@ -87,6 +87,12 @@ Le paramètre du groupe peut prendre plusieurs formes :
 - Le plus souvent le paramètre `l` est omis, et dans ce cas il est remplacé par `k`. Ainsi par exemple `{2/3}` indique le groupe 2 parmi 3.
 - si le paramètre `m` est omis, comme dans `{1}`, alors le nombre de groupes par défaut est utilisé. Le nombre de groupes par défaut est fixé avec le style `nombre de groupes` qui peut être utilisé de façon globale ou dans un module particulier.
 
+### Les styles de `\creneau`
+
+Il y a deux style utilitaires pour les créneaux :
+- `echelle` qui détermine la taille (relative) de la police utilisé. Par exemple `echelle=0.84` ;
+- `plus haut` qui permet de monter (ou descendre) les textes (titre, sur/sous-titre). Par exemple `plus haut=1mm`.
+
 ### Les raccourcies
 
 Pour faciliter l'écriture il est judicieux de définir des commandes « raccourcies » comme

@@ -120,7 +120,7 @@
   \edef\fromm{#2}%
   \edef\toh{#3}%
   \edef\tom{#4}%
-  \setlength{\duree}{\the\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
+  \setlength{\duree}{\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
 }
 % \parsegroupelen est un macro utilitaire pour \parsegroupe
 % le paramètre attendu est de la forme `2-3` ou `2`
@@ -169,11 +169,27 @@
   heure fin/.style={heure, below left},
   echelle/.code={
     \pgfmathsetmacro{\scalefactor}{#1/(1+\numberofgroups/7)}% facteur ajusté en fonction du nombre de groupes
+    \pgfmathsetmacro{\scaleinvfactor}{1/\scalefactor}
     \pgfkeysalso{scale={\scalefactor},inner sep=2*\scalefactor pt}%
   },
-  titre/.style={},
-  sur-titre/.style={above,font={\sffamily\hyphenchar\font=-1},text width=\duree,align=center},
-  sous-titre/.style={below,black!84,font=\sffamily\it,text width=\duree,align=center},
+  titre/.style={
+    % text width=\scaleinvfactor\duree,
+    align=flush center
+  },
+  sur-titre/.style={
+    above,
+    font={\sffamily\hyphenchar\font=-1},
+    % text width=\scaleinvfactor\duree,
+    align=flush center
+  },
+  sous-titre/.style={
+    below,
+    black!84,
+    font=\sffamily\it,
+    % text width=\scaleinvfactor\duree,
+    align=flush center
+  },
+  plus haut/.style={titre/.append style={yshift=#1}},
 }
 % définition de \joursemaine
 % qui renvoie le numéro du jour de la semaine en fonction du nom :
