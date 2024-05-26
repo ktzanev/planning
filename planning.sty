@@ -7,12 +7,12 @@
 \usepackage[french]{babel}
 \usetikzlibrary{babel} % pour pouvoir utiliser le babel français
 
-% key handler to store lengths, based on the original `.store in`
+% "key handler" pour stocker les longueurs, basé sur le `.store in` original
 \pgfkeys{
   /handlers/.length in/.code={%
-    \let#1\relax% if length already exist, reset it
-    \newlength{#1}% create the new legth register
-    \pgfkeysalso{\pgfkeyscurrentpath/.code=\pgfmathsetlength#1{##1}}% calculate and store the length
+    \let#1\relax% si la longueur existe déjà, la réinitialiser
+    \newlength{#1}% créer le nouveau registre de longueur
+    \pgfkeysalso{\pgfkeyscurrentpath/.code=\pgfmathsetlength#1{##1}}% calculer et stocker la longueur
   }
 }
 % calcul de quelques longueurs supplémentaires
@@ -21,7 +21,7 @@
 \newlength{\hday} % hauteur d'une journée
 \newlength{\hgroupe} % hauteur d'un groupe
 % le nombre de groupes doit être un entier > 0
-% si il y a un seul groupe, on ne l'affiche pas
+% s'il y a un seul groupe, on ne l'affiche pas
 \newcommand*\normalizenumberofgroups{
   \edef\numberofgroups{\the\numexpr\numberofgroups\relax}
   \ifnum\numberofgroups<1\relax
@@ -38,6 +38,8 @@
   \setlength{\hday}{\dimexpr\hplanning / \daysperweek\relax} % hauteur d'une journée
   \setlength{\hgroupe}{\dimexpr\hday / \numberofgroups\relax} % hauteur d'un groupe
 }
+% afficher les contraintes sur les réservations des salles ?
+\newif\ifplanning@contraintes
 % les paramètres généraux
 \tikzset{
   % largeur du planning
@@ -80,7 +82,10 @@
     largeur du nom du groupe=0,
     etiquette groupe/.style={opacity=0},
     ligne groupe/.style={draw=none}
-  }
+  },
+  % afficher les contraintes (par defaut `false`) sur les créneaux
+  % imposées par le service de réservation des salles
+  contraintes/.is if=planning@contraintes,
   % il y a aussi les style optionnels utilisé avec /.try
   % etiquette jour
   % etiquette groupe
@@ -96,8 +101,8 @@
 
 % définition du style `pos` qui peut être utilisé ainsi
 % [pos={0}{1}{09}{10}] pour positionner un point ( , ) à la place de
-%   lundi(0), à la séparation entre les groupes 1 et 2, à 9 heure et 10 minutes
-% ces paramètres sont des entier car il sont évalués avec `\numexpr`
+%   lundi(0), à la séparation entre les groupes 1 et 2, à 9 heures et 10 minutes
+% ces paramètres sont des entiers, car ils sont évalués avec `\numexpr`
 \tikzset{
   every picture/.style={yscale=-1},
   pos/.style n args={4}{
@@ -111,9 +116,9 @@
     \edef\valmin{\the\numexpr #4\relax}% minutes = 0, ...
   }
 }
-% définition du macro \horaires
+% définition de la macro \horaires
 % qui sauvegardes les heures et les minutes d'une expression comme 08:00-10:30
-% dans \fromh, \fromm, \toh, \tom, puis calcule la longeur \duree
+% dans \fromh, \fromm, \toh, \tom, puis calcule la longueur \duree
 \newlength{\duree}
 \def\horaires#1:#2-#3:#4;{%
   \edef\fromh{#1}%
@@ -122,7 +127,7 @@
   \edef\tom{#4}%
   \setlength{\duree}{\dimexpr\toh\hour-\fromh\hour+\tom\minute-\fromm\minute\relax}
 }
-% \parsegroupelen est un macro utilitaire pour \parsegroupe
+% \parsegroupelen est une macro utilitaire pour \parsegroupe
 % le paramètre attendu est de la forme `2-3` ou `2`
 % un paramètre `2` est équivalent à `2-2`
 \def\parsegroupelen#1-#2-#3endparsegroupe{
@@ -138,7 +143,7 @@
     \fi
   \fi
 }
-% \parsegroupe est un macro utilitaire pour \groupe
+% \parsegroupe est une macro utilitaire pour \groupe
 % le paramètre attendu est de la forme `1/3` ou `1`
 % un paramètre `1` est équivalent à `1/\numberofgroups`
 % où \numberofgroups est le nombre de groupes par défaut
@@ -152,7 +157,7 @@
   \fi
 }
 % \groupe défini la position et la taille du créneau dans une journée
-% le paramètre attendu est de la forme {k-l/m} où qui signifie:
+% le paramètre attendu est de la forme {k-l/m} où qui signifie :
 % - k-l/m => groupe qui occupe la place des groupes k à l parmi m groupes
 % k,l et m peuvent être manquant, et ainsi avoir des paramètres de la forme
 % - {k/m} => groupe k parmi m groupes
@@ -324,12 +329,47 @@
   },
   screen colors 3% les couleurs par défaut
 }
+% Les commandes pour afficher les contraintes de réservation des salles
+% sous forme de bandes verticales :
+% - les pauses obligatoires sont en vert
+% - le créneau fixe est en rouge
+\newcommand*{\draw@contraintes}{
+  % pause obligatoires  (en vert)
+  \fill[opacity=.1, green]
+    % 10:00-10:15
+    [pos={0}{0}{10}{0}] {[yshift=-.49\hhouroffset] coordinate (start)}
+    [pos={\daysperweek}{0}{10}{15}] coordinate (end)
+    (start) rectangle (end)
+    % 12:15-12:45
+    [pos={0}{0}{12}{15}] {[yshift=-.49\hhouroffset] coordinate (start)}
+    [pos={\daysperweek}{0}{12}{45}] coordinate (end)
+    (start) rectangle (end)
+    % 14:45-15:00
+    [pos={0}{0}{14}{45}] {[yshift=-.49\hhouroffset] coordinate (start)}
+    [pos={\daysperweek}{0}{15}{00}] coordinate (end)
+    (start) rectangle (end)
+    % 16:30-16:45
+    [pos={0}{0}{16}{30}] {[yshift=-.49\hhouroffset] coordinate (start)}
+    [pos={\daysperweek}{0}{16}{45}] coordinate (end)
+    (start) rectangle (end)
+  ;
+  % le créneau fixe (en rouge)
+  \fill[opacity=.1, red]
+    [pos={0}{0}{15}{0}] {[yshift=-.49\hhouroffset] coordinate (start)}
+    [pos={\daysperweek}{0}{16}{30}] coordinate (end)
+    (start) rectangle (end)
+  ;
+}
 % l'environnement planning
 % qui utilise tikzpicture
 % #1 est le (tikz-)style optionnel du planning
 \newenvironment{planning}[1][]
 {
   \begin{tikzpicture}[#1]
+    % si les contraintes sont activées, on les affiche
+    \ifplanning@contraintes
+      \draw@contraintes
+    \fi
     % tracer les lignes horizontales
     \foreach \d in {0,...,\daysperweek}{
       \draw[ligne jour/.try] (-\wdaylabel-\wgroupelabel,\d*\hday) -- (\wplanning,\d*\hday);
