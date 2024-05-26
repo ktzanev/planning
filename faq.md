@@ -50,7 +50,11 @@ Pour changer la taille d'une police vous pouvez utiliser le style `echelle` (qui
 
 ## Comment décaler vers le haut les textes dans un créneau ?
 
-Pour décaler tous les textes dans un créneau il suffit de monter le titre, car le sous-titre et le sur-titre sont positionnés relativement au titre. Pour monter le titre il suffit de rajouter au style `titre` le style `yshift` (ici « shift » signifié « décalage » et « y » est pour « verticale »). Ainsi par exemple pour monter de 7 mm :
+Pour décaler tous les textes dans un créneau vous pouvez utiliser le style `plus haut`. Par exemple pour décaler de 1 mm :
 ```tex
-titre/.append style={yshift=7mm}
+\creneau[plus haut=1mm]{sur-titre}{titre}{sous-titre}{lundi}{1/1}{08:00-10:00}
+```
+En réalité il suffit de monter le titre, car le sous-titre et le sur-titre sont positionnés relativement au titre. Pour monter le titre il suffit de rajouter au style `titre` le style `yshift` (ici « shift » signifié « décalage » et « y » est pour « verticale »). Ainsi, par exemple, pour monter de 7 pt au lieu de faire `plus haut=7pt` on peut faire aussi :
+```tex
+titre/.append style={yshift=7pt}
 ```

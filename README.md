@@ -90,7 +90,7 @@ Le paramètre du groupe peut prendre plusieurs formes :
 ### Les styles de `\creneau`
 
 Il y a deux style utilitaires pour les créneaux :
-- `echelle` qui détermine la taille (relative) de la police utilisé. Par exemple `echelle=0.84` ;
+- `echelle` qui détermine la taille (relative) de la police utilisée. Par exemple `echelle=0.84` ;
 - `plus haut` qui permet de monter (ou descendre) les textes (titre, sur/sous-titre). Par exemple `plus haut=1mm`.
 
 ### Les raccourcies
@@ -120,6 +120,17 @@ Pour redéfinir la couleur du troisième module il suffit de faire par exemple 
 
 ```latex
 \colorlet{module3}{red}
+```
+
+### Les contraintes
+
+Le service de réservation des salles de l'université de Lille impose des contraintes sur les créneaux reservables. Il y a des pauses obligatoires et des créneaux non modulables.
+Pour afficher ces contraintes on peut utiliser le style `contraintes` :
+
+```latex
+\begin{planning}[contraintes]
+... 
+\end{planning}
 ```
 
 ### Questions fréquentes
