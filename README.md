@@ -51,14 +51,14 @@ Ainsi par exemple pour ne pas afficher la ligne séparatrice des groupes on peut
 }
 ```
 
-Il y a essentiellement deux environnements `planning` et `module` et une commande `creneau`:
+Il y a essentiellement deux environnements `planning` et `module` et une commande `creneau`. Voici un exemple d'utilisation :
 
 ```latex
 \tikzset{
   cours/.style={
-    titre/.append style={echelle=1.05, align=center},
-    sur-titre/.append style={echelle=.85},
-    sous-titre/.append style={echelle=.7},
+    titre/.append style={scale=1.05, align=center},
+    sur-titre/.append style={scale=.85},
+    sous-titre/.append style={scale=.7},
     line width=.7pt,
   }
 }

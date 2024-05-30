@@ -172,27 +172,35 @@
   heure/.style = {inner sep=2pt,outer sep=0,draw,fill=black,fill opacity=.1,text opacity=1,scale=.7},
   heure debut/.style={heure, below right},
   heure fin/.style={heure, below left},
-  echelle/.code={
-    \pgfmathsetmacro{\scalefactor}{#1/(1+\numberofgroups/7)}% facteur ajusté en fonction du nombre de groupes
+  scale factor calc/.code={
+    \pgfmathsetmacro{\scalefactor}{1/(1+\numberofgroups/7)}% facteur ajusté en fonction du nombre de groupes
     \pgfmathsetmacro{\scaleinvfactor}{1/\scalefactor}
     \pgfkeysalso{scale={\scalefactor},inner sep=2*\scalefactor pt}%
   },
   titre/.style={
     % text width=\scaleinvfactor\duree,
-    align=flush center
+    align=flush center,
+    scale factor calc,
   },
   sur-titre/.style={
     above,
     font={\sffamily\hyphenchar\font=-1},
     % text width=\scaleinvfactor\duree,
-    align=flush center
+    align=flush center,
+    scale factor calc,
   },
   sous-titre/.style={
     below,
     black!84,
     font=\sffamily\it,
     % text width=\scaleinvfactor\duree,
-    align=flush center
+    align=flush center,
+    scale factor calc,
+  },
+  echelle/.style={
+    titre/.append style={scale=#1},
+    sur-titre/.append style={scale=#1},
+    sous-titre/.append style={scale=#1},
   },
   plus haut/.style={titre/.append style={yshift=#1}},
 }

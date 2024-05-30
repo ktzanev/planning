@@ -22,31 +22,32 @@ soit juste après `\begin{planning}` :
 ```
 - Pour changer un style d'un créneau particulier il faut le mettre juste après `\creneau`, ou si vous avez créé des raccourcis comme `\cours` ou `\td`, juste après cette commande :
 ```tex
-\td[sous-titre/.append style={echelle=.84}]{enseignants}{lundi}{08:00-10:00}{nom salle}
+\td[echelle=.84, plus haut=1mm]{enseignants}{lundi}{08:00-10:00}{nom salle}
 ```
 
 ## Comment changer plusieurs styles à la fois ?
 
-Il suffit de séparer les styles par des virgules, comme :
+Il suffit de séparer les styles par des virgules. Par exemple pour changer les couleurs du titre et du sous-titre d'un module on peut faire :
 
 ```tex
-\begin{module}{M44}{Géométrie}[titre/.append style={yshift=7mm}, sous-titre/.append style={scale=1.2}]
-```
-ou
-```tex
 \begin{module}{M44}{Géométrie}[
-    titre/.append style={yshift=7mm},
-    sous-titre/.append style={scale=1.2}
+    titre/.append style={text=red},
+    sous-titre/.append style={text=blue}
   ]
 ```
 
 ## Comment changer la taille d'une police ?
 
-Pour changer la taille d'une police vous pouvez utiliser le style `echelle` (qui s'adapte en fonction du nombre de groupes) ou le plus standard `scale`. Ces styles peuvent être rajoutés aux styles du texte en question :
-- Pour changer la taille du sous-titre (qui contient souvent la salle) on peut faire :
+La taille des polices (titre, sous-titre, sur-titre) s'adapte en fonction du nombre de groupes. Pour changer la taille de toutes les polices vous pouvez utiliser le style `echelle`. 
 ```tex
-\td[sous-titre/.append style={scale=1.2}]{enseignants}{lundi}{08:00-10:00}{nom salle}
+\creneau[echelle=1.1]{sur-titre}{titre}{sous-titre}{lundi}{1/1}{08:00-10:00}
 ```
+Pour changer la taille d'une seule des polices vous pouvez rajouter le style `scale` à la police en question. Par exemple pour changer la taille du titre :
+```tex
+\creneau[titre/.append style={scale=0.9}]{sur-titre}{titre}{sous-titre}{lundi}{1/1}{08:00-10:00}
+```
+
+En réalité, `echelle=X` rajoute `scale=X` aux trois styles `sur-titre`, `titre` et `sous-titre`. 
 
 ## Comment décaler vers le haut les textes dans un créneau ?
 
