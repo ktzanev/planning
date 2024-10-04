@@ -398,7 +398,7 @@
     % mettre les étiquettes verticales (jours et groupes)
     \foreach[count=\dn from 0] \d in {lundi,mardi,mercredi,jeudi,vendredi,samedi}{
       \ifnum\dn < \daysperweek\relax
-        \node[scale=2,etiquette jour/.try] at (-.5\wdaylabel-\wgroupelabel,\dn*\hday+.5\hday) {\d};
+        \node[scale=2,etiquette jour/.try, \d/.try, name=\d] at (-.5\wdaylabel-\wgroupelabel,\dn*\hday+.5\hday) {\d};
         \foreach \g in {1,...,\numberofgroups}
           \node[etiquette groupe/.try] at (-.5\wgroupelabel,\dn*\hday+\g*\hgroupe-.5\hgroupe) {G\g};
       \fi
@@ -420,10 +420,9 @@
 
 % l'environnement module qui permet de définir le numéro et le nom du module
 % le compteur du module est utilisé pour lui attribuer une couleur
-\newcounter{module}\setcounter{module}{0}
+\newcounter{module}\setcounter{module}{1}
 \newenvironment{module}[2]{
   \xdef\numeromodule{#1}
   \xdef\titremodule{#2}
-  \stepcounter{module}
   \begin{scope}%
-}{\end{scope}}
+}{\end{scope}\stepcounter{module}}

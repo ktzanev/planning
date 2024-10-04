@@ -59,3 +59,9 @@ En réalité il suffit de monter le titre, car le sous-titre et le sur-titre son
 ```tex
 titre/.append style={yshift=7pt}
 ```
+## Comment placer un texte sous les jours de la semaine ?
+
+Le nom du jour est placé dans un nœud TikZ nommé. Par exemple `lundi` pour le lundi. Ainsi pour placer un texte sous le « lundi » on peut faire :
+```tex
+\node[below, gray] at (lundi.south) {Text pour lundi};
+```
